@@ -6,10 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.xml.serialize.XMLSerializer;
-import org.json.JSONObject;
-import org.json.XML;
-import org.mortbay.util.ajax.JSON;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.util.StaxonUtils;
-import com.github.asilvestre.jpurexml.XmlParseException;
-import com.github.asilvestre.jxmltojson.JsonConverter;
 
 @RestController
 public class RestAPIController {
