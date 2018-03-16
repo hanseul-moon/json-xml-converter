@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- 합쳐지고 최소화된 최신 CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<!-- 부가적인 테마 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<meta charset="UTF-8">
+<title>GUIDE</title>
+
+<style>
+textarea{
+	width:250px;
+	height:250px;
+}
+</style>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			
+			<!-- buttons -->
+			<div class="col col-xs-3">
+				
+				<button id="id-xml-to-json" type="button" class="btn btn-info btn-block">xml to json</button>
+				<br />
+												
+				<button id="id-json-to-xml" type="button" class="btn btn-warning btn-block">json to xml</button>			
+				<br />
+																	
+			</div>
+						
+			<div class="col col-xs-1">
+			</div>
+			
+			<!-- output -->
+			<div class="col col-xs-8">
+				<div id="xml-to-json" style="display:none;">
+					<textarea id="input-xml"></textarea>
+					<button type="button" id="convert-xml-to-json">convert</button>
+					<textarea id="output-xml-to-json"></textarea>
+				</div>
+				
+				<div id="json-to-xml" style="display:none;">
+					<textarea id="input-json"></textarea>
+					<button type="button" id="convert-json-to-xml">convert</button>
+					<textarea id="output-json-to-xml"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script>
+
+$("#id-xml-to-json").on("click",function(){
+	$("#output-xml-to-json").empty();
+	$("#xml-to-json").show();
+	$("#json-to-xml").hide();
+});
+
+$("#id-json-to-xml").on("click",function(){
+	$("#xml-to-json").hide();
+	$("#output-json-to-xml").empty();
+	$("#json-to-xml").show();
+});
+
+var url = "http://localhost:8189/";
+
+var xml2json = function(_data){
+	$.ajax({   
+	    type: "POST",   
+	    url: url + "xml2json",   
+	    data: _data,
+	    contentType : "application/xml",
+	    cache: false,
+		success : function(data) {
+			var result = JSON.stringify(data,null,4);			
+			var cut = result.indexOf("{",2);
+			result = result.substring(cut, result.length - 3).trim();
+			
+	    	$("#output-xml-to-json").val(result);
+		},
+		error : function(){
+			$("#output-xml-to-json").val("xml2json error");
+		}
+	});
+}
+
+var json2xml = function(_data){
+	
+	alert(_data);
+	$.ajax({   
+	    type: "POST",   
+	    url: url + "json2xml",   
+	    data: _data,
+	    contentType : "application/json",
+	    cache: false,
+		success : function(data) { 
+		
+			var xmlText = new XMLSerializer().serializeToString(data);
+			xmlText = "<?xml version='1.0' encoding='utf-8'?>\n" + xmlText.substring(5, xmlText.length-6); 
+	    	$("#output-json-to-xml").val(xmlText);
+		},
+		error : function(){
+			$("#output-json-to-xml").val("json2xml error");
+		}
+	});
+}
+
+$("#convert-xml-to-json").on("click",function(){
+	var data = $("#input-xml").val();
+	if(!data) {
+		data = "<data></data>"
+	}
+	
+	var emp = data.toString().trim().substring(0,5);
+	
+	if(emp == "<?xml"){
+		var num = data.indexOf("?>",0) + 2;
+		data = data.substring(num);	
+	}
+	data = "<emp>" + data + "</emp>";
+	xml2json(data);
+});
+
+$("#convert-json-to-xml").on("click",function(){
+	var data = $("#input-json").val();
+	if(!data) {
+		data = "{ a : 1 }"
+	}
+	json2xml(data);
+});
+</script>
+
+</html>
