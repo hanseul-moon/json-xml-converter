@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- 합쳐지고 최소화된 최신 CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+	<title>XML-JSON CONVERTER</title>
+</head>
+<body>
+	<nav class="navbar navbar-light" style="background:#E9ECEF; margin-bottm:30px;">
+	  <span class="navbar-brand mb-0 h1">XML-JSON Converter</span>
+	</nav>
+		<table align=center>
+			<tr >
+				<td>XML <button type="button" id="id-xml-delete-btn" class="btn btn-outline-danger btn-sm" style="margin:10px;">삭제</button><br>
+					<textarea class="form-control" id="id-xml-text" style="width:400px; height:600px; resize: none;"></textarea></td>
+				<td>
+					<table>
+						<tr>
+							<td><button type="button" id="id-xml-to-json-btn" class="btn btn-danger" style="margin:10px;">&gt;&gt;</button></td>
+			 			</tr>
+						<tr>
+							<td><button type="button" id="id-json-to-xml-btn" class="btn btn-danger" style="margin:10px;">&lt;&lt;</button></td>
+						</tr>
+					</table>
+				</td>
+				<td>JSON<button type="button" id="id-json-delete-btn" class="btn btn-outline-danger btn-sm" style="margin:10px;">삭제</button><br>
+					<textarea class="form-control" id="id-json-text" style="width:400px; height:600px; resize: none;"></textarea></td>	
+			</tr>
+			<tr>
+				<td colspan=3>
+					<button type="button" id="convert2" class="btn btn-danger" style="margin-bottom:20px; margin-top:40px;">RESULT</button><br>
+	   						<span class="input-group-text" id="result" style="padding:20px;">text</span>
+				</td>
+			</tr>
+		</table>
+		msg:
+		<div id="msg"></div>
+</body>
+
+<script>
+
+/* $("#id-xml-to-json").on("click",function(){
+	$("#output-xml-to-json").empty();
+	$("#xml-to-json").show();
+	$("#json-to-xml").hide();
+});
+
+$("#id-json-to-xml").on("click",function(){
+	$("#xml-to-json").hide();
+	$("#output-json-to-xml").empty();
+	$("#json-to-xml").show();
+}); */
+
+var url = "http://localhost:8080/";
+
+var xml2json = function(_data){
+	$.ajax({   
+	    type: "POST",   
+	    url: url + "xml2json",   
+	    data: _data,
+	    contentType : "application/xml",
+	    cache: false,
+		success : function(data) {
+			var result = JSON.stringify(data,null,4);			
+			var cut = result.indexOf("{",2);
+			result = result.substring(cut, result.length - 4).trim() + "\n}";
+	    	$("#id-json-text").val(result);
+		},
+		error : function(){
+			$("#id-json-text").val("xml2json error");
+		}
+	});
+}
+
+var json2xml = function(_data){
+	$.ajax({
+	    type: "POST",   
+	    url: url + "json2xml",   
+	    data: _data,
+	    contentType : "application/json",
+	    cache: false,
+		success : function(data) { 
+			var xmlText = new XMLSerializer().serializeToString(data);
+			
+			xmlText = xmlText.replace("<t>","").replace("</t>","");
+			//xmlText = number2Code(xmlText);
+
+			//xmlText = xmlText.substring(3, xmlText.length - 5);
+			var rootTagIndex = xmlText.indexOf(">");
+	    	var rootCloseTagIndex = xmlText.lastIndexOf("</") + 2;
+	    	
+	    	var rootTag = xmlText.substring(1,rootTagIndex);
+	    	var rootCloseTag = xmlText.substring(rootCloseTagIndex, xmlText.length - 2);  
+	    	var boolean_rootTag = xmlText.substring(rootTagIndex).indexOf("<" + rootTag + ">");
+	    	
+	    	if(boolean_rootTag != -1 || rootTag == rootCloseTag) {
+	    		xmlText = "<%$&temp>\n" + xmlText.trim() + "\n</%$&temp>";
+	    	} 
+			xmlText = "<?xml version='1.0' encoding='utf-8'?>\n" + xmlText;
+	    	$("#id-xml-text").val(xmlText);
+		},
+		error : function(){
+			$("#id-xml-text").val("json2xml error");
+		}
+	});
+}
+
+$("#id-xml-to-json-btn").on("click",function(){
+	var data = $("#id-xml-text").val();
+	if(!data) {
+		data = "<data></data>"
+	}
+	
+	var emp = data.toString().trim().substring(0,5);
+	
+	if(emp == "<?xml"){
+		var num = data.indexOf("?>",0) + 2;
+		data = data.substring(num);	
+	}
+	data = "<tmp>" + data + "</tmp>";
+	$("#msg").text(data);
+	xml2json(data);
+});
+
+$("#id-json-to-xml-btn").on("click",function(){
+	var data = $("#id-json-text").val();
+	if(!data) {
+		data = "{ a : 1 }"
+	}
+	$("#msg").text(data);
+	
+	//data = number2Code(data);
+	json2xml(data);
+});
+
+function number2Code(xmlText){
+	xmlText = xmlText.replace(/NubmerToCodeExecuteZERO/g,"0");
+	xmlText = xmlText.replace(/NubmerToCodeExecuteONE/g,"1");
+	xmlText = xmlText.replace(/NubmerToCodeExecuteTWO/g,"2");
+	xmlText = xmlText.replace(/NubmerToCodeExecuteTHREE/g,"3");
+	xmlText = xmlText.replace(/NubmerToCodeExecuteFOUR/g,"4");
+	xmlText = xmlText.replace(/NubmerToCodeExecuteFIVE/g,"5");
+	xmlText = xmlText.replace(/NubmerToCodeExecuteSIX/g,"6");
+	xmlText = xmlText.replace(/NubmerToCodeExecuteSEVEN/g,"7");
+	xmlText = xmlText.replace(/NubmerToCodeExecuteEIGHT/g,"8");
+	xmlText = xmlText.replace(/NubmerToCodeExecuteNINE/g,"9");
+	
+	return xmlText;
+} 
+
+
+
+$("#id-xml-delete-btn").on("click",function(){
+	$("#id-xml-text").val("");
+});
+
+$("#id-json-delete-btn").on("click",function(){
+	$("#id-json-text").val("");
+});
+
+</script>
+
+</html>

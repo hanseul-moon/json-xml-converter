@@ -17,24 +17,29 @@ textarea{
 }
 </style>
 </head>
+
 <body>
-	<div class="container-fluid">
-		<div class="row">
+	<nav aria-label="breadcrumb">
+  <ol class="breadcrumb" style="font-size:1vw;">
+    <li class="breadcrumb-item active" aria-current="page">XML-JSON CONVERTER</li>
+  </ol>
+</nav>
+
+	<div class="row">
+		<div class="container-fluid">
 			
 			<!-- buttons -->
 			<div class="col col-xs-3">
 				
 				<button id="id-xml-to-json" type="button" class="btn btn-info btn-block">xml to json</button>
 				<br />
-												
+			</div>
+
+			<div class="col col-xs-3">			
 				<button id="id-json-to-xml" type="button" class="btn btn-warning btn-block">json to xml</button>			
 				<br />
-																	
-			</div>
+			</div>														
 						
-			<div class="col col-xs-1">
-			</div>
-			
 			<!-- output -->
 			<div class="col col-xs-8">
 				<div id="xml-to-json" style="display:none;">
@@ -49,6 +54,10 @@ textarea{
 					<textarea id="output-json-to-xml" style="width:400px; height:600px;"></textarea>
 				</div>
 			</div>
+			
+			<!-- 수정중 -->
+			
+			
 		</div>
 		<div id="msg"></div>
 	</div>

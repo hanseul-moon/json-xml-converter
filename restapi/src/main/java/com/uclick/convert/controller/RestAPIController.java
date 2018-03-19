@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.uclick.convert.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,24 +15,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.util.JSONUtils;
-import com.example.demo.util.Json2xmlUtils;
 import com.example.demo.util.StaxonUtils;
 
 @RestController
 public class RestAPIController {
-
-    @RequestMapping(value="/xml2json",
+	@RequestMapping(value="/xml2json",
     		method=RequestMethod.POST,
     		consumes="application/xml",
     		produces="application/json")
     public ResponseEntity<String> xtoj(HttpServletRequest request, 
 			@RequestBody String xml) {
+//    	Map<String,Object> map = new HashMap<String,Object>();
+//    	map.put("xml2json", "success");
+
+//    	String res = "";      		
+//		try {
+//			res = JsonConverter.convertXml(xml);
+//		} catch (XmlParseException e) {
+//			// TODO Auto-generated catch block
+//			System.out.println("Error parsing " + e.toString());
+//		}
     	
-    	xml = xml.replace("<%$&temp>","").replace("</%$&temp>", "");
     	String json = StaxonUtils.xml2json(xml);
         System.out.println("xml2json success \n"+json);
-      
+       
         return new ResponseEntity<String>(json, HttpStatus.OK);
     }
     
@@ -43,8 +49,22 @@ public class RestAPIController {
     public ResponseEntity<String> jtox(HttpServletRequest request, 
 			@RequestBody String json) {
     	
-    	String xml = Json2xmlUtils.xmlMaker(json);
-    	System.out.println(xml);
+    	String xml = StaxonUtils.json2xml(json);
+    	
+//    	int rootTagIndex = xml.indexOf(">");
+//    	int rootCloseTagIndex = xml.lastIndexOf("</") + 2;
+//    	
+//    	String rootTag = xml.substring(1,rootTagIndex);
+//    	String rootCloseTag = xml.substring(rootCloseTagIndex, xml.length() - 2);  
+//    	boolean boolean_rootTag = xml.substring(rootTagIndex).contains("<" + rootTag + ">");
+//    	
+//    	if(boolean_rootTag == true || rootTag.equals(rootCloseTag) == false) {
+//    		xml = "<&#37;&#36;&#38;temp>\n" + xml + "</&#37;&#36;&#38;temp>";
+//    	}
+    	
+        System.out.println("json2xml success \n"+xml);
+        xml = "<%$%emp>" + xml + "</%$%emp>";
+        
         return new ResponseEntity<String>(xml, HttpStatus.OK);
     }
     
@@ -68,5 +88,4 @@ public class RestAPIController {
     	
         return new ResponseEntity<String>(json, HttpStatus.OK);
     }
-
 }

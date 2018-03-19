@@ -8,7 +8,7 @@ public class GuideController {
 	
 	@RequestMapping("/guide")
 	public String guide() {
-		return "guide";
+		return "converter";
 	}
 	
 	@RequestMapping("/")
