@@ -1,62 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<!-- 합쳐지고 최소화된 최신 CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<meta charset="UTF-8">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<!-- 합쳐지고 최소화된 최신 CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="/Chart.bundle.js"></script>
+	<script src="/utils.js"></script>
+	<meta charset="UTF-8">
 	<title>XML-JSON CONVERTER</title>
+<style>
+th, td{
+	padding:10px;
+}
+
+</style>
 </head>
 <body>
-	<nav class="navbar navbar-light" style="background:#E9ECEF; margin-bottm:30px;">
+	<nav class="navbar navbar-light" style="background:#E9ECEF; margin-bottom:30px;">
 	  <span class="navbar-brand mb-0 h1">XML-JSON Converter</span>
 	</nav>
-		<table align=center>
-			<tr >
-				<td>XML <button type="button" id="id-xml-delete-btn" class="btn btn-outline-danger btn-sm" style="margin:10px;">삭제</button><br>
-					<textarea class="form-control" id="id-xml-text" style="width:400px; height:600px; resize: none;"></textarea></td>
-				<td>
+	<table align='center' border=0>
+		<tr >
+			<td>XML <button type="button" id="id-xml-delete-btn" class="btn btn-outline-danger btn-sm" style="margin:10px;">Clear</button><br>
+				<textarea class="form-control" id="id-xml-text" style="width:400px; height:400px; resize: none;"></textarea></td>
+			<td>
+				<table>
+					<tr>
+						<td><button type="button" id="id-xml-to-json-btn" class="btn btn-danger" style="margin:10px;">&gt;&gt;</button></td>
+		 			</tr>
+					<tr>
+						<td><button type="button" id="id-json-to-xml-btn" class="btn btn-danger" style="margin:10px;">&lt;&lt;</button></td>
+					</tr>
+				</table>
+			</td>
+			<td>JSON<button type="button" id="id-json-delete-btn" class="btn btn-outline-danger btn-sm" style="margin:10px;">Clear</button><br>
+				<textarea class="form-control" id="id-json-text" style="width:400px; height:400px; resize: none;"></textarea></td>	
+		</tr>
+		<tr>
+			<td colspan=3>
+			<p>
+				<button class="btn btn-danger" type="button" id="id-result-btn" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+					Result
+				</button>
+			</p>
+		
+			<div class="collapse" id="collapseExample" >
+			<div class="card" border=0>
+				<div class="card-header">
+					<div id="id-startTime-text">&nbsp;</div>
+					<div id="id-lastTime-text">&nbsp;</div>	
+				</div>
+				<div class="card-body">
 					<table>
 						<tr>
-							<td><button type="button" id="id-xml-to-json-btn" class="btn btn-danger" style="margin:10px;">&gt;&gt;</button></td>
-			 			</tr>
-						<tr>
-							<td><button type="button" id="id-json-to-xml-btn" class="btn btn-danger" style="margin:10px;">&lt;&lt;</button></td>
+							<td>　단위: 회
+								<table border=1 style="border:darkgray; width:400px; margin:10px;">
+									<thead>
+										<tr>
+											<th scope="col" style="width:130px;"></th>
+											<th scope="col" style="width:90px; text-align:center;">성공</th>
+											<th scope="col" style="width:90px; text-align:center;">실패</th>
+											<th scope="row" style="width:90px; text-align:center;">합계</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row" style="text-align:center;">XML to JSON</th>
+											<td id="id-xml2json-success-text" style="text-align:right;"></td>
+											<td id="id-xml2json-fail-text" style="text-align:right;"></td>
+											<td id="id-xml2json-total-text" style="text-align:right;"></td>
+											</tr>
+										<tr>
+											<th scope="row" style="text-align:center;">JSON to XML</th>
+											<td id="id-json2xml-success-text" style="text-align:right;"></td>
+											<td id="id-json2xml-fail-text" style="text-align:right;"></td>
+											<td id="id-json2xml-total-text" style="text-align:right;"></td>
+											</tr>
+									</tbody>
+								</table>
+							</td>
+							<td>
+								<div id='chart-container' class="graph_container" style="width:450px; padding:5px">
+									<canvas id="result-chart"></canvas>
+								</div>
+							</td>
 						</tr>
-					</table>
-				</td>
-				<td>JSON<button type="button" id="id-json-delete-btn" class="btn btn-outline-danger btn-sm" style="margin:10px;">삭제</button><br>
-					<textarea class="form-control" id="id-json-text" style="width:400px; height:600px; resize: none;"></textarea></td>	
-			</tr>
-			<tr>
-				<td colspan=3>
-					<button type="button" id="convert2" class="btn btn-danger" style="margin-bottom:20px; margin-top:40px;">RESULT</button><br>
-	   						<span class="input-group-text" id="result" style="padding:20px;">text</span>
-				</td>
-			</tr>
+					</table> 
+				</div>
+			</div>
+			</div>
+			</td>
+		</tr>
 		</table>
-		msg:
-		<div id="msg"></div>
+	<br><br>
 </body>
 
 <script>
 
-/* $("#id-xml-to-json").on("click",function(){
-	$("#output-xml-to-json").empty();
-	$("#xml-to-json").show();
-	$("#json-to-xml").hide();
-});
-
-$("#id-json-to-xml").on("click",function(){
-	$("#xml-to-json").hide();
-	$("#output-json-to-xml").empty();
-	$("#json-to-xml").show();
-}); */
-
-var url = "http://localhost:8080/";
+var url = "http://192.168.23.95:8080/";
 
 var xml2json = function(_data){
 	$.ajax({   
@@ -67,12 +112,16 @@ var xml2json = function(_data){
 	    cache: false,
 		success : function(data) {
 			var result = JSON.stringify(data,null,4);			
-			var cut = result.indexOf("{",2);
-			result = result.substring(cut, result.length - 4).trim() + "\n}";
-	    	$("#id-json-text").val(result);
+			//var cut = result.indexOf("{",2);
+			//result = result.substring(cut, result.length - 4).trim() + "\n}";
+	    	$("#id-json-text").val(result);	
+	    	xml2json_success_count();
+	    	resultRefresh();
 		},
 		error : function(){
 			$("#id-json-text").val("xml2json error");
+			xml2json_fail_count();
+			resultRefresh();
 		}
 	});
 }
@@ -88,33 +137,105 @@ var json2xml = function(_data){
 			var xmlText = new XMLSerializer().serializeToString(data);
 			
 			xmlText = xmlText.replace("<t>","").replace("</t>","");
-			//xmlText = number2Code(xmlText);
 
 			//xmlText = xmlText.substring(3, xmlText.length - 5);
 			var rootTagIndex = xmlText.indexOf(">");
 	    	var rootCloseTagIndex = xmlText.lastIndexOf("</") + 2;
 	    	
 	    	var rootTag = xmlText.substring(1,rootTagIndex);
-	    	var rootCloseTag = xmlText.substring(rootCloseTagIndex, xmlText.length - 2);  
+	    	var rootCloseTag = xmlText.substring(rootCloseTagIndex, xmlText.length - 2);
 	    	var boolean_rootTag = xmlText.substring(rootTagIndex).indexOf("<" + rootTag + ">");
 	    	
 	    	if(boolean_rootTag != -1 || rootTag == rootCloseTag) {
-	    		xmlText = "<%$&temp>\n" + xmlText.trim() + "\n</%$&temp>";
+	    		xmlText = "<datas>\n" + xmlText.trim() + "\n</datas>";
 	    	} 
 			xmlText = "<?xml version='1.0' encoding='utf-8'?>\n" + xmlText;
 	    	$("#id-xml-text").val(xmlText);
+	    	json2xml_success_count();
+	    	resultRefresh();
 		},
 		error : function(){
 			$("#id-xml-text").val("json2xml error");
+			json2xml_fail_count();
+			resultRefresh();
 		}
 	});
 }
 
+function attachRootTag(){
+	
+}
+
+function xml2json_success_count(){
+	var key = "xml2json_success";
+	var count = Number(localStorage.getItem(key)) + 1;
+	
+   	localStorage.setItem(key, count);
+}
+
+function xml2json_fail_count(){
+	var key = 'xml2json_fail'
+	var count = Number(localStorage.getItem(key)) + 1;
+	
+   	localStorage.setItem(key, count);
+}
+
+function json2xml_success_count(){
+	var key = "json2xml_success";
+	var count = Number(localStorage.getItem(key)) + 1;
+	
+   	localStorage.setItem(key, count);
+}
+
+function json2xml_fail_count(){
+	var key = 'json2xml_fail'
+	var count = Number(localStorage.getItem(key)) + 1;
+	
+   	localStorage.setItem(key, count);
+	/* var count = localStorage.getItem(key);
+	
+    if(count == null){
+   	 	localStorage.setItem(key, '1');
+   	 	count = 0;
+   	 
+    }else{
+   	 	count = Number(count) + 1;
+   	 	localStorage.setItem(key, count);
+    } */
+}
+
+window.onload = function(){
+	
+	/* var xml2json_success = localStorage.getItem("xml2json_success");
+	var xml2json_fail 	 = localStorage.getItem("xml2json_fail");
+	var json2xml_success = localStorage.getItem("json2xml_success");
+	var json2xml_fail 	 = localStorage.getItem("json2xml_fail"); */
+	
+	var now = new Date();                                                  // 현재시간
+    var nowTime = now.getFullYear() + "년 " + 
+    			 (now.getMonth()+1) + "월 " + 
+    			  now.getDate() 	+ "일 " + 
+    			  now.getHours() 	+ "시 " + 
+    			  now.getMinutes() 	+ "분 " + 
+    			  now.getSeconds() 	+ "초";
+	
+	localStorage.setItem("xml2json_success", "0");
+	localStorage.setItem("xml2json_fail", "0");
+	localStorage.setItem("json2xml_success", "0");
+	localStorage.setItem("json2xml_fail", "0");
+	
+	/* if(xml2json_success == null && 
+	   xml2json_fail 	== null && 
+	   json2xml_success == null && 
+	   json2xml_fail 	== null){ */
+		
+		localStorage.setItem("startTime",nowTime);
+	//}
+	$("#id-result-table").hide();
+}
+
 $("#id-xml-to-json-btn").on("click",function(){
 	var data = $("#id-xml-text").val();
-	if(!data) {
-		data = "<data></data>"
-	}
 	
 	var emp = data.toString().trim().substring(0,5);
 	
@@ -122,23 +243,18 @@ $("#id-xml-to-json-btn").on("click",function(){
 		var num = data.indexOf("?>",0) + 2;
 		data = data.substring(num);	
 	}
-	data = "<tmp>" + data + "</tmp>";
-	$("#msg").text(data);
+	//data = "<tmp>" + data + "</tmp>";
+	resultRefresh();
 	xml2json(data);
 });
 
 $("#id-json-to-xml-btn").on("click",function(){
 	var data = $("#id-json-text").val();
-	if(!data) {
-		data = "{ a : 1 }"
-	}
-	$("#msg").text(data);
-	
-	//data = number2Code(data);
+	resultRefresh();
 	json2xml(data);
 });
 
-function number2Code(xmlText){
+/* function number2Code(xmlText){
 	xmlText = xmlText.replace(/NubmerToCodeExecuteZERO/g,"0");
 	xmlText = xmlText.replace(/NubmerToCodeExecuteONE/g,"1");
 	xmlText = xmlText.replace(/NubmerToCodeExecuteTWO/g,"2");
@@ -151,9 +267,7 @@ function number2Code(xmlText){
 	xmlText = xmlText.replace(/NubmerToCodeExecuteNINE/g,"9");
 	
 	return xmlText;
-} 
-
-
+}  */
 
 $("#id-xml-delete-btn").on("click",function(){
 	$("#id-xml-text").val("");
@@ -163,6 +277,152 @@ $("#id-json-delete-btn").on("click",function(){
 	$("#id-json-text").val("");
 });
 
-</script>
+$("#id-result-btn").on("click",function(){
+	resultRefresh();
+});
 
+function resultRefresh(){
+	var xml2json_success = localStorage.getItem('xml2json_success');
+	var xml2json_fail = localStorage.getItem('xml2json_fail');
+	var xml2jaon_total = Number(xml2json_success) + Number(xml2json_fail);
+	var json2xml_success = localStorage.getItem('json2xml_success');
+	var json2xml_fail = localStorage.getItem('json2xml_fail');
+	var json2xml_total = Number(json2xml_success) + Number(json2xml_fail);
+	//localStorage.clear();
+	var now = new Date();                                                  // 현재시간
+    var nowTime = now.getFullYear() + "년 " + 
+    			 (now.getMonth()+1) + "월 " + 
+    			  now.getDate() 	+ "일 " + 
+    			  now.getHours() 	+ "시 " + 
+    			  now.getMinutes() 	+ "분 " + 
+    			  now.getSeconds() 	+ "초";
+	
+    $("#id-result-table").show();
+	$("#id-xml2json-success-text").html(xml2json_success);
+	$("#id-xml2json-fail-text").html(xml2json_fail);
+	$("#id-xml2json-total-text").html(xml2jaon_total);
+	$("#id-json2xml-success-text").html(json2xml_success);
+	$("#id-json2xml-fail-text").html(json2xml_fail);
+	$("#id-json2xml-total-text").html(json2xml_total);
+	
+	$("#id-startTime-text").text("통계 시작:　" + localStorage.getItem("startTime"));
+	$("#id-lastTime-text").text("통계 종료:　" + nowTime);
+	loadChart();
+}
+
+function resultClear(){
+	$("#id-xml2json-success-text").html('');
+	$("#id-xml2json-fail-text").html('');
+	$("#id-xml2json-total-text").html('');
+	$("#id-json2xml-success-text").html('');
+	$("#id-json2xml-fail-text").html('');
+	$("#id-json2xml-total-text").html('');
+}
+
+function loadChart(){
+	var xml2json_success = Number(localStorage.getItem('xml2json_success'));
+	var xml2json_fail = Number(localStorage.getItem('xml2json_fail'));
+	var xml2jaon_total = Number(xml2json_success) + Number(xml2json_fail);
+	var json2xml_success = Number(localStorage.getItem('json2xml_success'));
+	var json2xml_fail = Number(localStorage.getItem('json2xml_fail'));
+	var json2xml_total = Number(json2xml_success) + Number(json2xml_fail);
+	
+	var xml2json_success_percent = xml2json_success/xml2jaon_total * 100;
+	var xml2json_fail_percent = xml2json_fail/xml2jaon_total * 100;
+	var json2xml_success_percent = json2xml_success/json2xml_total * 100;
+	var json2xml_fail_percent = json2xml_fail/json2xml_total * 100;
+	
+	xml2json_success_percent = xml2json_success_percent.toFixed(2);
+	xml2json_fail_percent = xml2json_fail_percent.toFixed(2);
+	json2xml_success_percent = json2xml_success_percent.toFixed(2);
+	json2xml_fail_percent = json2xml_fail_percent.toFixed(2);
+			
+	var barOptions_stacked = {
+	    tooltips: {
+	        enabled: false
+	    },
+	    hover :{
+	        animationDuration:0
+	    },
+	    scales: {
+	        xAxes: [{
+	            ticks: {
+	                beginAtZero:true,
+	            },
+	            scaleLabel:{
+	                display:false
+	            },
+	            gridLines: {
+	            	display:false
+	            }, 
+	            stacked: true
+	        }],
+	        yAxes: [{
+	            gridLines: {
+	                display:false,
+	                zeroLineWidth: 0
+	            },
+	            stacked: true
+	        }]
+	    },
+	    legend:{
+	        display: true,
+	        position: 'bottom'
+	    },
+	    
+	    barPercentage : 5,
+	    
+	    animation: {
+	        onComplete: function () {
+	            var chartInstance = this.chart;
+	            var ctx = chartInstance.ctx;
+	            ctx.textAlign = "left";
+	            ctx.font = "14px OpenSans";
+	            ctx.fillStyle = "#000";
+
+	            Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
+	                var meta = chartInstance.controller.getDatasetMeta(i);
+	                Chart.helpers.each(meta.data.forEach(function (bar, index) {
+	                    data = dataset.data[index];
+	                    
+	                    if(data != 'NaN' && data != 0){
+		                    if(i==0){	
+		                        ctx.fillText(data + "%", 100, bar._model.y-35);
+		                    } else {
+		                        ctx.fillText(data + "%", bar._model.x-50, bar._model.y-35);
+		                    }
+	                    }
+	                }),this)
+	            }),this);
+	        }
+	    }
+	};
+	
+	var config = {
+		type: 'horizontalBar',
+		data: {
+			datasets: [{
+				data: [xml2json_success_percent, json2xml_success_percent],
+	            backgroundColor: "rgb(33, 150, 243)",
+	            label:'성공'
+	        },{
+	            data: [xml2json_fail_percent, json2xml_fail_percent],
+	            backgroundColor: "rgb(220, 53, 69)",
+	            label:'실패'
+			}],
+			labels: [
+				'XML to JSON',
+				'JSON to XML'
+			]
+		},
+		options: barOptions_stacked
+	};
+	
+	$("#result-chart").remove();
+	$("#chart-container").append("<canvas id='result-chart'></canvas>");
+	
+	var ctx = document.getElementById('result-chart').getContext('2d');
+	window.myPie = new Chart(ctx, config);
+}
+	</script>
 </html>

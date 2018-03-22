@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Line Chart Test</title>
+	<script src="/Chart.bundle.js"></script>
+	<script src="/utils.js"></script>
+ </head>
+ 
+<body>
+
+	<div class="graph_container" style="width:40%">
+		<canvas id="Chart1"></canvas>
+	</div>
+
+	
+	<script>
+	var barOptions_stacked = {
+		    tooltips: {
+		        enabled: false
+		    },
+		    hover :{
+		        animationDuration:0
+		    },
+		    scales: {
+		        xAxes: [{
+		            ticks: {
+		                beginAtZero:true,
+		            },
+		            scaleLabel:{
+		                display:false
+		            },
+		            gridLines: {
+		            }, 
+		            stacked: true
+		        }],
+		        yAxes: [{
+		            gridLines: {
+		                display:false,
+		                zeroLineWidth: 0
+		            },
+		            stacked: true
+		        }]
+		    },
+		    legend:{
+		        display:false
+		    },
+		    
+		    animation: {
+		        onComplete: function () {
+		            var chartInstance = this.chart;
+		            var ctx = chartInstance.ctx;
+		            ctx.textAlign = "left";
+		            ctx.font = "9px Open Sans";
+		            ctx.fillStyle = "#fff";
+
+		            Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
+		                var meta = chartInstance.controller.getDatasetMeta(i);
+		                Chart.helpers.each(meta.data.forEach(function (bar, index) {
+		                    data = dataset.data[index];
+		                    if(i==0){
+		                        ctx.fillText(data, 50, bar._model.y+4);
+		                    } else {
+		                        ctx.fillText(data, bar._model.x-25, bar._model.y+4);
+		                    }
+		                }),this)
+		            }),this);
+		        }
+		    },
+		    pointLabelFontFamily : "Quadon Extra Bold",
+		    scaleFontFamily : "Quadon Extra Bold",
+		};
+
+	
+	
+	
+	
+	
+		var ctx = document.getElementById("Chart1");
+		var myChart = new Chart(ctx, {
+		    type: 'horizontalBar',
+		    data: {
+		        labels: ["2014", "2013"],
+		        
+		        datasets: [{
+		            data: [727, 589],
+		            backgroundColor: "rgb(33, 150, 243)",
+		        },{
+		            data: [238, 553],
+		            backgroundColor: "rgb(220, 53, 69)"
+			        }]
+		    },
+		    options: barOptions_stacked,
+		});
+	</script>
+</body>
+
+</html>

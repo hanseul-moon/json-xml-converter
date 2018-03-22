@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.util.JSONUtils;
 import com.example.demo.util.Json2xmlUtils;
 import com.example.demo.util.StaxonUtils;
+import com.example.demo.util.Xml2JsonUtils;
 
 @RestController
 public class RestAPIController {
@@ -29,8 +29,7 @@ public class RestAPIController {
     public ResponseEntity<String> xtoj(HttpServletRequest request, 
 			@RequestBody String xml) {
     	
-    	xml = xml.replace("<%$&temp>","").replace("</%$&temp>", "");
-    	String json = StaxonUtils.xml2json(xml);
+    	String json = Xml2JsonUtils.jsonMaker(xml);
         System.out.println("xml2json success \n"+json);
       
         return new ResponseEntity<String>(json, HttpStatus.OK);

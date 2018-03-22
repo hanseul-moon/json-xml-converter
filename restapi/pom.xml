@@ -81,6 +81,8 @@
 	</build>
 
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
+	
 		<!-- jackson library -->
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>

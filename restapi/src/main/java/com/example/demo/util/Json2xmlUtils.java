@@ -1,5 +1,7 @@
 package com.example.demo.util;
 
+import com.google.gson.Gson;
+
 public class Json2xmlUtils {
 
 	public static String attachRootTag(String xml) {
@@ -9,7 +11,7 @@ public class Json2xmlUtils {
     	int rootCloseTagIndex = xml.lastIndexOf("</") + 2;
     	
     	String rootTag = xml.substring(1,rootTagIndex);
-    	String rootCloseTag = xml.substring(rootCloseTagIndex, xml.length() - 2);  
+    	String rootCloseTag = xml.substring(rootCloseTagIndex, xml.length() - 2);
     	boolean boolean_rootTag = xml.substring(rootTagIndex).contains("<" + rootTag + ">");
     	
     	if(boolean_rootTag == true || rootTag.equals(rootCloseTag) == false) {
@@ -22,7 +24,7 @@ public class Json2xmlUtils {
 		
 		json = Json2xmlUtils.arrayJsonCheck(json);
 		
-		boolean jsonValid = JSONUtils.isJSONValid(json);
+		boolean jsonValid = Json2xmlUtils.isJSONValid(json);
     	System.out.println(jsonValid);
     	String xml = "";
     	
@@ -42,6 +44,7 @@ public class Json2xmlUtils {
 		return xml;
 	}
 	
+	// 미사용
 	public static String number2Code(String json) {
 		
 		json = json.replaceAll("0", "NubmerToCodeExecuteZERO");
@@ -66,4 +69,17 @@ public class Json2xmlUtils {
 		
 		return json;
 	}
+	
+	 private static final Gson gson = new Gson();
+	 
+	 private Json2xmlUtils(){}
+	 
+	 public static boolean isJSONValid(String jsonInString) {
+	      try {
+	          gson.fromJson(jsonInString, Object.class);
+	          return true;
+	      } catch(com.google.gson.JsonSyntaxException ex) { 
+	          return false;
+	      }
+	  }
 }
